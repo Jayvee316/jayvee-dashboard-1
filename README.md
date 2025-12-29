@@ -1,59 +1,205 @@
-# JayveeDashboard1
+# Jayvee Dashboard
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.3.
+A modern Angular dashboard application featuring a glassmorphism UI design with JWT authentication, connecting to a C# ASP.NET Core backend.
 
-## Development server
+## Features
 
-To start a local development server, run:
+- **Glassmorphism UI** - Frosted glass effects, blur, gradients, and modern aesthetics
+- **Collapsible Sidebar** - Navigation with icons, labels, and badges
+- **JWT Authentication** - Secure login with token-based authentication
+- **Route Guards** - Protected routes with automatic redirect to login
+- **Lazy Loading** - All pages are lazy-loaded for optimal performance
+- **Responsive Design** - Works on desktop and mobile devices
+- **Signal-based State** - Modern Angular signals for reactive state management
+
+## Tech Stack
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| Angular | 21.x | Frontend framework |
+| TypeScript | 5.x | Type-safe JavaScript |
+| RxJS | 7.x | Reactive programming |
+| Angular Signals | - | State management |
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── components/
+│   │   ├── layout/          # Main layout wrapper
+│   │   └── sidebar/         # Collapsible navigation sidebar
+│   ├── guards/
+│   │   └── auth.guard.ts    # Route protection (authGuard, guestGuard, adminGuard)
+│   ├── interceptors/
+│   │   └── auth.interceptor.ts  # JWT token injection
+│   ├── pages/
+│   │   ├── blog/            # Blog page
+│   │   ├── dashboard/       # Main dashboard
+│   │   ├── login/           # Login page
+│   │   ├── messages/        # Messages page
+│   │   ├── profile/         # User profile
+│   │   ├── projects/        # Projects page
+│   │   ├── settings/        # Settings page
+│   │   └── skills/          # Skills page
+│   ├── services/
+│   │   └── auth.service.ts  # Authentication service
+│   ├── app.config.ts        # App configuration
+│   ├── app.routes.ts        # Route definitions
+│   └── app.ts               # Root component
+├── environments/
+│   ├── environment.ts           # Development config
+│   └── environment.production.ts # Production config
+└── styles.scss              # Global glassmorphism theme
+```
+
+## Prerequisites
+
+- Node.js 18+ and npm
+- Angular CLI (`npm install -g @angular/cli`)
+- C# Backend running (my-portfolio-api)
+
+## Setup Instructions
+
+### 1. Clone the Repository
 
 ```bash
+git clone https://github.com/Jayvee316/jayvee-dashboard-1.git
+cd jayvee-dashboard-1
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure Environment
+
+Edit `src/environments/environment.ts` for local development:
+
+```typescript
+export const environment = {
+  production: false,
+  apiUrl: 'http://localhost:5022/api',  // C# backend URL
+  nodeApiUrl: 'http://localhost:3000/api' // Optional Node.js backend
+};
+```
+
+For production, edit `src/environments/environment.production.ts`:
+
+```typescript
+export const environment = {
+  production: true,
+  apiUrl: 'https://your-api-url.onrender.com/api',
+  nodeApiUrl: 'https://your-node-api.onrender.com/api'
+};
+```
+
+### 4. Start the C# Backend
+
+Make sure the C# backend (my-portfolio-api) is running:
+
+```bash
+cd ../my-portfolio-api
+dotnet run
+```
+
+The API should be available at `http://localhost:5022`.
+
+### 5. Start the Angular App
+
+```bash
+npm start
+# or
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Navigate to `http://localhost:4200`.
 
-## Code scaffolding
+## Authentication Flow
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Login Process
 
-```bash
-ng generate component component-name
+1. User enters credentials on `/login` page
+2. Angular sends POST to `/api/auth/login` on C# backend
+3. Backend validates credentials and returns JWT token + user data
+4. Token is stored in localStorage
+5. User is redirected to `/dashboard`
+
+### Token Management
+
+- **Storage**: JWT token stored in `localStorage` as `auth_token`
+- **Injection**: `auth.interceptor.ts` adds `Authorization: Bearer <token>` to API requests
+- **Expiration**: Token expiry is checked before API calls and on app startup
+- **Logout**: Clears token from localStorage and redirects to login
+
+### Route Guards
+
+| Guard | Purpose |
+|-------|---------|
+| `authGuard` | Protects routes requiring authentication |
+| `guestGuard` | Prevents logged-in users from accessing login page |
+| `adminGuard` | Restricts routes to admin users only |
+
+### Test Credentials
+
+```
+Email: admin@example.com
+Password: admin123
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Available Scripts
 
-```bash
-ng generate --help
+| Command | Description |
+|---------|-------------|
+| `npm start` | Start development server on port 4200 |
+| `npm run build` | Build for production |
+| `npm test` | Run unit tests |
+| `npm run watch` | Build and watch for changes |
+
+## Glassmorphism Theme
+
+The app uses CSS custom properties for theming. Key variables in `styles.scss`:
+
+```scss
+:root {
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-blur: blur(20px);
+  --accent-primary: #6366f1;
+  --accent-secondary: #8b5cf6;
+  --accent-gradient: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+}
 ```
 
-## Building
+### Glass Components
 
-To build the project run:
+- `.glass-card` - Frosted glass card with hover effects
+- `.glass-btn` - Glass-styled buttons (primary, secondary, ghost)
+- `.glass-input` - Form inputs with glass styling
 
-```bash
-ng build
-```
+## Deployment
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+### Vercel (Recommended for Frontend)
 
-## Running unit tests
+1. Connect your GitHub repository to Vercel
+2. Set build command: `npm run build`
+3. Set output directory: `dist/jayvee-dashboard-1`
+4. Add environment variables if needed
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
+### Manual Build
 
 ```bash
-ng e2e
+npm run build
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+The built files will be in `dist/jayvee-dashboard-1/`.
 
-## Additional Resources
+## Related Projects
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- [my-portfolio-api](https://github.com/Jayvee316/my-portfolio-api) - C# ASP.NET Core backend with JWT authentication
+
+## License
+
+MIT
